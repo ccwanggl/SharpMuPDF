@@ -3,12 +3,12 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#define u64 uint64_t
-#define u32 uint32_t
-#define u16 uint16_t
-#define u8  uint8_t
 
-u8* jbig2_lossless_encode(int width, int height, int stride, bool zeroIsWhite, u8* const source, int* const length);
+struct Pix;
+
+uint8_t* jbig2_lossless_encode(int width, int height, int stride, bool zeroIsWhite, uint8_t* const source, bool withHeader, bool dupLineRemoval, int* const length);
+
+Pix* CreatePix(int width, int height, int stride, bool zeroIsWhite, uint8_t* const source);
 
 
 #endif

@@ -1,12 +1,31 @@
 #include "jbig2enc.h"
 #include "jbig2enc.lossless.h"
+#include <malloc.h>
 #include <allheaders.h>
 #if (LIBLEPT_MAJOR_VERSION == 1 && LIBLEPT_MINOR_VERSION >= 83) || LIBLEPT_MAJOR_VERSION > 1
 #include "pix_internal.h"
 #endif
 
-u8* jbig2_lossless_encode(int width, int height, int stride, bool zeroIsWhite, u8* const source, int* const length) {
-	u8* ret;
+#define u64 uint64_t
+#define u32 uint32_t
+#define u16 uint16_t
+#define u8  uint8_t
+
+uint8_t* jbig2_lossless_encode(int width, int height, int stride, bool zeroIsWhite, uint8_t* const source, bool withHeader, bool dupLineRemoval, int* const length) {
+	Pix* pix = CreatePix(width, height, stride, zeroIsWhite, source);
+	if (!pix) {
+		return NULL;
+	}
+	u8* ret = jbig2_encode_generic(pix, withHeader, 0, 0, dupLineRemoval, length);
+	free(pix);
+	return ret;
+}
+
+Pix* CreatePix(int width, int height, int stride, bool zeroIsWhite, uint8_t* const source) {
+	Pix* pix = (Pix*)malloc(sizeof(Pix));
+	if (pix == NULL) {
+		return NULL;
+	}
 	u32 mask = zeroIsWhite ? 0x0 : 0xffffffff;
 	u8* pl = source;
 	u8* p;
@@ -31,10 +50,6 @@ u8* jbig2_lossless_encode(int width, int height, int stride, bool zeroIsWhite, u
 		pl += stride;
 	}
 
-	Pix* pix = (Pix*)malloc(sizeof(Pix));
-	if (pix == NULL) {
-		return 0;
-	}
 	pix->w = width;
 	pix->h = height;
 	pix->d = 1;
@@ -47,7 +62,5 @@ u8* jbig2_lossless_encode(int width, int height, int stride, bool zeroIsWhite, u
 	pix->special = 0;
 	pix->text = NULL;
 	pix->colormap = NULL;
-	ret = jbig2_encode_generic(pix, false, 0, 0, false, length);
-	free(pix);
-	return ret;
+	return pix;
 }
