@@ -33,6 +33,8 @@
     <None Include="version.py" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Document\Buffer.cpp" />
+    <ClCompile Include="Document\CompressedBuffer.cpp" />
     <ClCompile Include="Rendition\JBIG2Decode.cpp" />
     <ClCompile Include="Rendition\JBIG2Encode.cpp" />
     <ClCompile Include="Rendition\FontDescriptor.cpp" />
@@ -51,6 +53,7 @@
     <ClCompile Include="Rendition\TextPage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="!Include\Buffer.h" />
     <ClInclude Include="!Include\Colorspace.h" />
     <ClInclude Include="!Include\Device.h" />
     <ClInclude Include="!Include\Document.h" />
@@ -71,6 +74,7 @@
     <ClInclude Include="!Include\ObjWrapper.h" />
     <ClInclude Include="!Include\Cookie.h" />
     <ClInclude Include="Context.h" />
+    <ClInclude Include="!Include\CompressedBuffer.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

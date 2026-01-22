@@ -66,6 +66,12 @@
     <ClCompile Include="Rendition\JBIG2Decode.cpp">
       <Filter>Rendition</Filter>
     </ClCompile>
+    <ClCompile Include="Document\CompressedBuffer.cpp">
+      <Filter>Document</Filter>
+    </ClCompile>
+    <ClCompile Include="Document\Buffer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="!Include\MuException.h">
@@ -124,6 +130,12 @@
     </ClInclude>
     <ClInclude Include="!Include\JBIG2Codec.h">
       <Filter>Rendition</Filter>
+    </ClInclude>
+    <ClInclude Include="!Include\CompressedBuffer.h">
+      <Filter>Document</Filter>
+    </ClInclude>
+    <ClInclude Include="!Include\Buffer.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
