@@ -19,9 +19,24 @@ DLLEXP int TintPixmap(fz_context* ctx, fz_pixmap* pixmap, int black, int white) 
 	MuTry(ctx, fz_tint_pixmap(ctx, pixmap, black, white));
 }
 
+DLLEXP int InvertPixmapLuminance(fz_context* ctx, fz_pixmap* pixmap) {
+	MuTry(ctx, fz_invert_pixmap_luminance(ctx, pixmap));
+}
+
+DLLEXP int LoadTiffSubImageCount(fz_context* ctx, const unsigned char* data, size_t length) {
+	int p;
+	MuTryReturn(ctx, fz_load_tiff_subimage_count(ctx, data, length), p);
+}
+
+DLLEXP fz_pixmap* LoadTiffSubImage(fz_context* ctx, const unsigned char* data, size_t length, int index) {
+	fz_pixmap* p;
+	MuTryReturn(ctx, fz_load_tiff_subimage(ctx, data, length, index), p);
+}
 #pragma managed
 
-MuPDF::Pixmap^ MuPDF::Pixmap::Create(ColorspaceKind colorspace, int width, int height) {
+using namespace MuPDF;
+
+Pixmap^ Pixmap::Create(ColorspaceKind colorspace, int width, int height) {
 	fz_pixmap* pixmap = GetPixmap(Context::Ptr, Context::GetFzColorspace(colorspace), width, height);
 	if (pixmap) {
 		return gcnew Pixmap(pixmap);
@@ -29,14 +44,30 @@ MuPDF::Pixmap^ MuPDF::Pixmap::Create(ColorspaceKind colorspace, int width, int h
 	throw MuException::FromContext();
 }
 
-MuPDF::Pixmap^ MuPDF::Pixmap::Create(ColorspaceKind colorspace, MuPDF::BBox box) {
-	fz_pixmap* pixmap = GetPixmap(Context::Ptr, Context::GetFzColorspace(colorspace), box);
+Pixmap^ Pixmap::Create(ColorspaceKind colorspace, MuPDF::BBox box) {
+	fz_pixmap* pixmap = ::GetPixmap(Context::Ptr, Context::GetFzColorspace(colorspace), box);
 	if (pixmap) {
 		return gcnew Pixmap(pixmap);
 	}
 	throw MuException::FromContext();
 }
 
-bool MuPDF::Pixmap::Tint(int black, int white) {
-	return TintPixmap(Context::Ptr, _pixmap, black, white);
+void Pixmap::InvertLuminance() {
+	if (!::InvertPixmapLuminance(Context::Ptr, _pixmap)) {
+		throw MuException::FromContext();
+	}
+}
+
+int MuPDF::Pixmap::LoadTiffSubImageCount(IntPtr data, int length) {
+	return ::LoadTiffSubImageCount(Context::Ptr, (const unsigned char*)data.ToPointer(), (size_t)length);
+}
+
+Pixmap^ MuPDF::Pixmap::LoadTiffSubImage(IntPtr data, int length, int index) {
+	return gcnew Pixmap(::LoadTiffSubImage(Context::Ptr, (const unsigned char*)data.ToPointer(), (size_t)length, index));
+}
+
+void Pixmap::Tint(int black, int white) {
+	if (!::TintPixmap(Context::Ptr, _pixmap, black, white)) {
+		throw MuException::FromContext();
+	}
 }

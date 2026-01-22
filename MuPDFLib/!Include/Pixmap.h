@@ -11,6 +11,9 @@ using namespace System;
 namespace MuPDF {
 public ref class Pixmap sealed : IDisposable {
 public:
+	static int LoadTiffSubImageCount(IntPtr data, int length);
+	static Pixmap^ LoadTiffSubImage(IntPtr data, int length, int index);
+
 	property IntPtr Samples {
 		IntPtr get() { return _samples; }
 	}
@@ -52,9 +55,10 @@ public:
 	void Invert() {
 		fz_invert_pixmap(Context::Ptr, _pixmap);
 	}
-	bool Tint(int black, int white);
-	bool Tint(int color) {
-		return Tint(0, color);
+	void InvertLuminance();
+	void Tint(int black, int white);
+	void Tint(int color) {
+		Tint(0, color);
 	}
 	void Gamma(float gamma) {
 		if (gamma == 1.0) {

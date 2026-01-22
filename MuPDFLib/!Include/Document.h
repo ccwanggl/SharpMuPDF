@@ -11,6 +11,7 @@ using namespace System::Collections::Generic;
 namespace MuPDF {
 
 ref class WriterOptions;
+ref class Image;
 enum class PageLabelStyle;
 
 public ref class Document sealed : IDisposable, IEquatable<Document^> {
@@ -226,6 +227,7 @@ public:
 	PdfArray^ NewArray(int capacity);
 	PdfArray^ NewBox(Box box);
 	PdfArray^ NewMatrix(Matrix matrix);
+	PdfObject^ AddImage(Image^ image);
 
 	/// <summary>
 	/// Returns true if 'obj' is an indirect reference to an object that is held by the "local" xref section.

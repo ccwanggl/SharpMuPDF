@@ -242,6 +242,10 @@ PdfArray^ Document::NewMatrix(Matrix matrix) {
 	return gcnew PdfArray(pdf_new_matrix(Context::Ptr, _pdf, matrix));
 }
 
+PdfObject^ MuPDF::Document::AddImage(Image^ image) {
+	return PdfObject::Wrap(pdf_add_image(Context::Ptr, _pdf, image->Ptr));
+}
+
 void Document::DeleteObject(int objNum) {
 	if (!::DeleteObject(Context::Ptr, _pdf, objNum)) {
 		throw MuException::FromContext();
@@ -313,6 +317,7 @@ void Document::Save(String^ filePath, WriterOptions^ options) {
 	if (!r) {
 		throw MuException::FromContext();
 	}
+	_path = filePath;
 }
 
 void Document::SaveSnapshot(String^ filePath) {
