@@ -591,8 +591,8 @@ EXPORTS
 	fz_pixmap_image_tile
 	fz_set_pixmap_image_tile
 	fz_load_jpx
-	opj_lock
-	opj_unlock
+	fz_opj_lock
+	fz_opj_unlock
 	fz_load_tiff_subimage_count
 	fz_load_tiff_subimage
 	fz_load_pnm_subimage_count
