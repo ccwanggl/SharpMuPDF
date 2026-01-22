@@ -54,9 +54,6 @@
     <ClCompile Include="Rendition\Image.cpp">
       <Filter>Rendition</Filter>
     </ClCompile>
-    <ClCompile Include="Document\Processor.cpp">
-      <Filter>Document</Filter>
-    </ClCompile>
     <ClCompile Include="Rendition\FontDescriptor.cpp">
       <Filter>Rendition</Filter>
     </ClCompile>
@@ -121,9 +118,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="!Include\Image.h">
       <Filter>Rendition</Filter>
-    </ClInclude>
-    <ClInclude Include="!Include\Processor.h">
-      <Filter>Document</Filter>
     </ClInclude>
     <ClInclude Include="!Include\FontDescriptor.h">
       <Filter>Rendition</Filter>

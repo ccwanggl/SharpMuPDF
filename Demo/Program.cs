@@ -62,10 +62,6 @@ namespace Demo
 									Console.WriteLine("Saving picture: " + (i + 1) + ".png");
 									bmp.Save((i + 1) + ".png"); // saves the bitmap to a file
 								}
-								using (var proc = new ProcessorLogger(pageInfo)) {
-									pageInfo.WriteLine("Contents:");
-									proc.ProcessPageContent(doc, p);
-								}
 							}
 						}
 					}

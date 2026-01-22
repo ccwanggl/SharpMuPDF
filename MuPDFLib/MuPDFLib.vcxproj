@@ -41,7 +41,6 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="Document\PdfObject.cpp" />
-    <ClCompile Include="Document\Processor.cpp" />
     <ClCompile Include="Rendition\Colorspace.cpp" />
     <ClCompile Include="Rendition\Device.cpp" />
     <ClCompile Include="Document\Document.cpp" />
@@ -67,7 +66,6 @@
     <ClInclude Include="!Include\Page.h" />
     <ClInclude Include="!Include\PdfObject.h" />
     <ClInclude Include="!Include\Pixmap.h" />
-    <ClInclude Include="!Include\Processor.h" />
     <ClInclude Include="!Include\Stream.h" />
     <ClInclude Include="!Include\Collection.h" />
     <ClInclude Include="!Include\TextPage.h" />
