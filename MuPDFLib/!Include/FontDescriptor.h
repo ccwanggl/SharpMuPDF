@@ -31,39 +31,18 @@ public ref class FontDescriptor sealed : IDisposable {
 public:
 	FontDescriptor() : FontDescriptor(pdf_new_font_desc(Context::Ptr)) {
 	}
-	property TextFont^ Font {
-		TextFont^ get();
-	}
-	property FontDescriptorFlags Flags {
-		FontDescriptorFlags get() { return (FontDescriptorFlags)_font->flags; }
-	}
-	property float ItalicAngle {
-		float get() { return _font->italic_angle; }
-	}
-	property float Ascent {
-		float get() { return _font->ascent; }
-	}
-	property float Descent {
-		float get() { return _font->descent; }
-	}
-	property float CapHeight {
-		float get() { return _font->cap_height; }
-	}
-	property float XHeight {
-		float get() { return _font->x_height; }
-	}
-	property float MissingWidth {
-		float get() { return _font->missing_width; }
-	}
-	property bool IsEmbedded {
-		bool get() { return _font->is_embedded; }
-	}
-	property int CidToGidLength {
-		int get() { return _font->cid_to_gid_len; }
-	}
-	property int CidToUcsLength {
-		int get() { return _font->cid_to_ucs_len; }
-	}
+	PropEmptyGet(TextFont^, Font);
+	PropGet(FontDescriptorFlags, Flags, (FontDescriptorFlags)_font->flags);
+	PropGet(float, ItalicAngle, _font->italic_angle);
+	PropGet(float, Ascent, _font->ascent);
+	PropGet(float, Descent, _font->descent);
+	PropGet(float, CapHeight, _font->cap_height);
+	PropGet(float, XHeight, _font->x_height);
+	PropGet(float, MissingWidth, _font->missing_width);
+	PropGet(bool, IsEmbedded, _font->is_embedded);
+	PropGet(int, CidToGidLength, _font->cid_to_gid_len);
+	PropGet(int, CidToUcsLength, _font->cid_to_ucs_len);
+
 	int CidToGid(int cid) {
 		return pdf_font_cid_to_gid(Context::Ptr, _font, cid);
 	}

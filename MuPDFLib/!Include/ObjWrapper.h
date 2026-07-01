@@ -9,6 +9,33 @@
 
 #define Unwrap(TManage) (TManage ? TManage->Ptr : NULL)
 
+#define PropEmptyGet(TProp, propName) property TProp propName { TProp get(); }
+
+#define PropGet(TProp, propName, func) property TProp propName { TProp get() { return func; } }
+
+#define PropGetSet(TProp, propName, getter, setter)\
+property TProp propName {\
+	TProp get() { return getter; }\
+	void set(TProp value) { setter; }\
+}
+
+#define ReadonlyIndexer(TValue, TParam, paramName, getter)\
+	property TValue default[TParam] {\
+		virtual TValue get(TParam paramName) {\
+			return getter;\
+		};\
+	}
+
+#define Indexer(TParam, paramName, TValue, valueName, getter, setter)\
+	property TValue default[TParam] {\
+		virtual TValue get(TParam paramName) {\
+			return getter;\
+		};\
+		void set(TParam paramName, TValue valueName) {\
+			setter;\
+		};\
+	}
+
 #define Equatable(TManage, OPtr) \
 	public: \
 		static bool operator == (TManage^ x, TManage^ y) { \

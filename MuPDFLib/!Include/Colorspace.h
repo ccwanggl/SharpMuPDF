@@ -35,22 +35,23 @@ public:
 	Colorspace(ColorspaceKind kind, ColorspaceFlags flags, int n, String^ name);
 	Colorspace(ColorspaceKind kind) : Colorspace(ToNativeColorspace(kind)) {};
 
-	property ColorspaceKind Kind { ColorspaceKind get() { return static_cast<ColorspaceKind>(_colorspace ? _colorspace->type : 0); } }
-	property ColorspaceFlags Flags { ColorspaceFlags get() { return static_cast<ColorspaceFlags>(_colorspace ? _colorspace->flags : 0); } }
+	PropGet(ColorspaceKind, Kind, static_cast<ColorspaceKind>(_colorspace ? _colorspace->type : 0));
+	PropGet(ColorspaceFlags, Flags, static_cast<ColorspaceFlags>(_colorspace ? _colorspace->flags : 0));
 
-	property int NumberOfColorant { int get() { return fz_colorspace_n(Context::Ptr, _colorspace); } }
-	property bool IsValidBlend { bool get(); }
-	property bool IsSubtractive { bool get(); }
-	property bool IsDeviceNHasOnlyCmyk { bool get(); }
-	property bool IsDeviceNHasCmyk { bool get(); }
-	property Colorspace^ Base { Colorspace ^ get(); }
-	property String^ Name { String ^ get(); }
+	PropGet(int, NumberOfColorant, fz_colorspace_n(Context::Ptr, _colorspace));
+	PropEmptyGet(bool, IsValidBlend);
+	PropEmptyGet(bool, IsSubtractive);
+	PropEmptyGet(bool, IsDeviceNHasOnlyCmyk);
+	PropEmptyGet(bool, IsDeviceNHasCmyk);
+	PropEmptyGet(Colorspace^, Base);
+	PropEmptyGet(String^, Name);
 
 internal:
 	Colorspace(fz_colorspace* colorspace) : _colorspace(colorspace) {
 		fz_keep_colorspace(Context::Ptr, colorspace);
 	};
-	property fz_colorspace* Ptr { fz_colorspace* get() { return _colorspace; } }
+
+	PropGet(fz_colorspace*, Ptr, _colorspace);
 
 	static fz_colorspace* ToNativeColorspace(MuPDF::ColorspaceKind kind);
 

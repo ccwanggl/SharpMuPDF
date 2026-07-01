@@ -1,4 +1,5 @@
 #include "fitz.h"
+#include "ObjWrapper.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -27,17 +28,18 @@ public:
 	/// <summary>
 	/// Gets or sets rendition anti-alias level. Valid values are ranged [0, 8].
 	/// </summary>
-	static property int AntiAlias {
-		int get() { return fz_aa_level(Ptr); }
-		void set(int value) { fz_set_aa_level(Ptr, value); }
-	}
+	static PropGetSet(int, AntiAlias,
+		fz_aa_level(Ptr),
+		fz_set_aa_level(Ptr, value)
+	);
+
 	/// <summary>
 	/// Gets or sets text rendition anti-alias level. Valid values are ranged [0, 8].
 	/// </summary>
-	static property int TextAntiAlias {
-		int get() { return fz_text_aa_level(Ptr); }
-		void set(int value) { fz_set_text_aa_level(Ptr, value); }
-	}
+	static PropGetSet(int, TextAntiAlias,
+		fz_text_aa_level(Ptr),
+		fz_set_text_aa_level(Ptr, value)
+	);
 
 	static void SetErrorCallback(Action<bool, String^>^ callback);
 
@@ -46,9 +48,7 @@ internal:
 		Context ^ get();
 	}
 
-	static property fz_context* Ptr {
-		fz_context* get() { return Current->_context; }
-	}
+	static PropGet(fz_context*, Ptr, Current->_context);
 
 protected:
 	!Context() {

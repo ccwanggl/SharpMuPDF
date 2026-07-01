@@ -1,3 +1,4 @@
+#include "fitz.h"
 #include "Geometry.h"
 #include <cfloat>
 
@@ -49,7 +50,7 @@ MuPDF::BBox MuPDF::BBox::operator|(BBox a, BBox b) {
 
 MuPDF::BBox::operator BBox(Box box) {
 	const static float t = 0.001f;
-	return { (int)floor(box.X0 + t), (int)floor(box.Y0 + t), (int)ceil(box.X1 - t), (int)ceil(box.Y1 - t) };
+	return { (int)floorf(box.X0 + t), (int)floorf(box.Y0 + t), (int)ceilf(box.X1 - t), (int)ceilf(box.Y1 - t) };
 }
 
 MuPDF::BBox MuPDF::BBox::operator&(BBox a, BBox b) {
@@ -78,16 +79,16 @@ MuPDF::Matrix MuPDF::Matrix::RotateTo(float theta) {
 	while (theta >= 360)
 		theta -= 360;
 
-	if (fabs(0 - theta) < FLT_EPSILON) {
+	if (fabsf(0 - theta) < FLT_EPSILON) {
 		return *this;
 	}
-	if (fabs(90.0f - theta) < FLT_EPSILON) {
+	if (fabsf(90.0f - theta) < FLT_EPSILON) {
 		return Matrix(C, D, -A, -B, E, F);
 	}
-	if (fabs(180.0f - theta) < FLT_EPSILON) {
+	if (fabsf(180.0f - theta) < FLT_EPSILON) {
 		return Matrix(-A, -B, -C, -D, E, F);
 	}
-	if (fabs(270.0f - theta) < FLT_EPSILON) {
+	if (fabsf(270.0f - theta) < FLT_EPSILON) {
 		return Matrix(-C, -D, A, B, E, F);
 	}
 	float s = sinf(theta * FZ_PI / 180);
@@ -113,19 +114,19 @@ MuPDF::Matrix MuPDF::Matrix::Rotate(float theta) {
 	while (theta >= 360)
 		theta -= 360;
 
-	if (fabs(0 - theta) < FLT_EPSILON) {
+	if (fabsf(0 - theta) < FLT_EPSILON) {
 		s = 0;
 		c = 1;
 	}
-	else if (fabs(90.0f - theta) < FLT_EPSILON) {
+	else if (fabsf(90.0f - theta) < FLT_EPSILON) {
 		s = 1;
 		c = 0;
 	}
-	else if (fabs(180.0f - theta) < FLT_EPSILON) {
+	else if (fabsf(180.0f - theta) < FLT_EPSILON) {
 		s = 0;
 		c = -1;
 	}
-	else if (fabs(270.0f - theta) < FLT_EPSILON) {
+	else if (fabsf(270.0f - theta) < FLT_EPSILON) {
 		s = -1;
 		c = 0;
 	}

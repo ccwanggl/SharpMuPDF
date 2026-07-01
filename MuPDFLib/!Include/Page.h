@@ -83,41 +83,23 @@ public:
 	/// <summary>
 	/// Determine the page size in points, taking page rotation into account. The page size is taken to be the crop box if it exists (visible area after cropping), otherwise the media box will be used (possibly including printing marks).
 	/// </summary>
-	property Box Bound { Box get(); }
-	property Box MediaBox { Box get(); }
-	property Box CropBox { Box get(); }
-	property Box ArtBox { Box get(); }
-	property Box BleedBox {
-		Box get();
-	}
-	property Box TrimBox {
-		Box get();
-	}
-	property int Rotation {
-		int get() {
-			return pdf_dict_get_int(Context::Ptr, PagePtr, PDF_NAME(Rotate));
-		}
-	}
-	property float UserUnit {
-		float get() {
-			return pdf_dict_get_real_default(Context::Ptr, PagePtr, PDF_NAME(UserUnit), 1);
-		}
-	}
-	property bool HasTransparency {
-		bool get() { return pdf_page_has_transparency(Context::Ptr, _pdfPage); }
-	}
-	property int AssociatedFileCount {
-		int get() { return pdf_count_page_associated_files(Context::Ptr, _pdfPage); }
-	}
-	property PdfDictionary^ PdfObject { PdfDictionary^ get(); }
-	property PdfDictionary^ Resources { PdfDictionary^ get(); }
+	PropEmptyGet(Box, Bound);
+	PropEmptyGet(Box, MediaBox);
+	PropEmptyGet(Box, CropBox);
+	PropEmptyGet(Box, ArtBox);
+	PropEmptyGet(Box, BleedBox);
+	PropEmptyGet(Box, TrimBox);
+	PropGet(int, Rotation, pdf_dict_get_int(Context::Ptr, PagePtr, PDF_NAME(Rotate)));
+	PropGet(float, UserUnit, pdf_dict_get_real_default(Context::Ptr, PagePtr, PDF_NAME(UserUnit), 1));
+	PropGet(bool, HasTransparency, pdf_page_has_transparency(Context::Ptr, _pdfPage));
+	PropGet(int, AssociatedFileCount, pdf_count_page_associated_files(Context::Ptr, _pdfPage));
+	PropEmptyGet(PdfDictionary^, PdfObject);
+	PropEmptyGet(PdfDictionary^, Resources);
 	/// <summary>
 	/// Gets the /Contents object, which can be a stream or an array, from the page dictionary
 	/// </summary>
-	property MuPDF::PdfObject^ Contents {
-		MuPDF::PdfObject^ get();
-	}
-	property MuPDF::TextPage^ TextPage { MuPDF::TextPage^ get(); }
+	PropEmptyGet(MuPDF::PdfObject^, Contents);
+	PropEmptyGet(MuPDF::TextPage^, TextPage);
 
 	Box BoundPageBox(PageBoxType boxType) {
 		return pdf_bound_page(Context::Ptr, _pdfPage, (fz_box_type)boxType);
@@ -202,12 +184,9 @@ internal:
 	~Page() {
 		this->!Page();
 	}
-	property pdf_page* Ptr {
-		pdf_page* get() { return _pdfPage; }
-	}
-	property pdf_obj* PagePtr {
-		pdf_obj* get() { return _pdfPage->obj; }
-	}
+	PropGet(pdf_page*, Ptr, _pdfPage);
+	PropGet(pdf_obj*, PagePtr, _pdfPage->obj);
+
 protected:
 	!Page();
 

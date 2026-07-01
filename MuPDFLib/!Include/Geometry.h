@@ -2,7 +2,7 @@
 #define __GEOMETRY
 
 #pragma once
-#include "fitz.h"
+#include "ObjWrapper.h"
 
 using namespace System;
 
@@ -54,37 +54,17 @@ public:
 	static initonly Box Unit = { 0, 0, 1, 1 };
 	static initonly Box Invalid = { 0, 0, -1, -1 };
 	Box(float x0, float y0, float x1, float y1) : X0(x0), X1(x1), Y0(y0), Y1(y1) {};
-	property bool IsEmpty {
-		bool get() {
-			return X0 == X1 || Y0 == Y1;
-		}
-	}
-	property float Width {
-		float get() {
-			return X1 > X0 ? X1 - X0 : 0;
-		}
-	}
-	property float Height {
-		float get() {
-			return Y1 > Y0 ? Y1 - Y0 : 0;
-		}
-	}
-	property float Top { float get() { return Y0; } }
-	property float Left { float get() { return X0; } }
-	property float Bottom { float get() { return Y1; } }
-	property float Right { float get() { return X1; } }
-	property bool IsInfinite {
-		bool get() {
-			return X0 == FZ_MIN_INF_RECT && X1 == FZ_MAX_INF_RECT &&
-				Y0 == FZ_MIN_INF_RECT && Y1 == FZ_MAX_INF_RECT;
-		}
-	}
-	property bool IsValid {
-		bool get() { return X0 <= X1 && Y0 <= Y1; }
-	}
-	property float Area {
-		float get() { return IsValid ? (X1 - X0) * (Y1 - Y0) : 0; }
-	}
+	PropGet(bool, IsEmpty, X0 == X1 || Y0 == Y1);
+	PropGet(float, Width, X1 > X0 ? X1 - X0 : 0);
+	PropGet(float, Height, Y1 > Y0 ? Y1 - Y0 : 0);
+	PropGet(float, Top, Y0);
+	PropGet(float, Left, X0);
+	PropGet(float, Bottom, Y1);
+	PropGet(float, Right, X1);
+	PropGet(bool, IsInfinite, X0 == FZ_MIN_INF_RECT && X1 == FZ_MAX_INF_RECT &&
+		Y0 == FZ_MIN_INF_RECT && Y1 == FZ_MAX_INF_RECT);
+	PropGet(bool, IsValid, X0 <= X1 && Y0 <= Y1);
+	PropGet(float, Area, IsValid ? (X1 - X0) * (Y1 - Y0) : 0);
 
 	bool Contains(Point p) {
 		return p.X >= X0 && p.X < X1 && p.Y >= Y0 && p.Y < Y1;
@@ -124,29 +104,15 @@ public:
 	static initonly BBox Unit = { 0, 0, 1, 1 };
 	static initonly BBox Invalid = { 0, 0, -1, -1 };
 	BBox(int x0, int y0, int x1, int y1) : X0(x0), X1(x1), Y0(y0), Y1(y1) {};
-	property int Width {
-		int get() {
-			return abs(X1 - X0);
-		}
-	}
-	property int Height {
-		int get() {
-			return abs(Y1 - Y0);
-		}
-	}
-	property int Top { int get() { return Y0; } }
-	property int Left { int get() { return X0; } }
-	property int Bottom { int get() { return Y1; } }
-	property int Right { int get() { return X1; } }
-	property bool IsInfinite {
-		bool get() {
-			return X0 == FZ_MIN_INF_RECT && X1 == FZ_MAX_INF_RECT &&
-				Y0 == FZ_MIN_INF_RECT && Y1 == FZ_MAX_INF_RECT;
-		}
-	}
-	property bool IsValid {
-		bool get() { return X0 <= X1 && Y0 <= Y1; }
-	}
+	PropGet(int, Width, abs(X1 - X0));
+	PropGet(int, Height, abs(Y1 - Y0));
+	PropGet(int, Top, Y0);
+	PropGet(int, Left, X0);
+	PropGet(int, Bottom, Y1);
+	PropGet(int, Right, X1);
+	PropGet(bool, IsInfinite, X0 == FZ_MIN_INF_RECT && X1 == FZ_MAX_INF_RECT &&
+		Y0 == FZ_MIN_INF_RECT && Y1 == FZ_MAX_INF_RECT);
+	PropGet(bool, IsValid, X0 <= X1 && Y0 <= Y1);
 	bool ContainsPoint(int x, int y) {
 		return x >= X0 && x < X1 && y >= Y0 && y < Y1;
 	}

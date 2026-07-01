@@ -30,6 +30,7 @@ public:
 	static Device^ NewBox(Pixmap^ pixmap, Box box);
 	static Device^ NewStructureText(TextPage^ textPage);
 	static Device^ NewStructureText(TextPage^ textPage, TextOptions^ options);
+
 	void EnableDeviceHints(DeviceHints hints) {
 		fz_enable_device_hints(Context::Ptr, _device, (int)hints);
 	}

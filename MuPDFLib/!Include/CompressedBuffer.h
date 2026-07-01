@@ -14,12 +14,12 @@ public ref class CompressedBuffer sealed : IDisposable {
 public:
 	CompressedBuffer() : CompressedBuffer(fz_new_compressed_buffer(Context::Ptr)) {};
 
-	property bool IsDisposed { bool get() { return _buffer == NULL; } }
+	PropGet(bool, IsDisposed, _buffer == NULL);
 
 	/// <summary>
 	/// Returns storage size used for this compressed buffer (in bytes).
 	/// </summary>
-	property long long Size { long long get() { return _buffer ? (long)fz_compressed_buffer_size(_buffer) : 0; } }
+	PropGet(int64_t, Size, _buffer ? (long)fz_compressed_buffer_size(_buffer) : 0);
 
 	/// <summary>Open a stream to read decompressed data from this compressed buffer.</summary>
 	Stream^ Open();

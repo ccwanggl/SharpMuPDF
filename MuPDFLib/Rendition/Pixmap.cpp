@@ -1,5 +1,6 @@
 #include "Pixmap.h"
 #include "Colorspace.h"
+#include "fitz.h"
 
 #pragma unmanaged
 static fz_pixmap* GetPixmap(fz_context* ctx, fz_colorspace* cs, int width, int height) {

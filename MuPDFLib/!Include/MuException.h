@@ -17,8 +17,7 @@ public:
 	MuException() : ApplicationException(), _code(-1) {}
 	MuException(String^ message) : ApplicationException(message), _code(-1) {};
 	MuException(String^ message, Exception^ innerException) : ApplicationException(message, innerException), _code(-1) {};
-	property int Code {
-		int get() { return _code; }
+	property int Code { int get() { return _code; }
 	internal:
 		void set(int code) {
 			_code = code;

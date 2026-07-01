@@ -10,14 +10,12 @@ namespace MuPDF {
 
 	public ref class Buffer sealed : IDisposable {
 	public:
-		property bool IsDisposed {
-			bool get() { return _buf == NULL; }
-		}
+		PropGet(bool, IsDisposed, _buf == NULL);
 
-		property int Capacity { int get() { return _buf ? (int)_buf->cap : 0; } }
+		PropGet(int, Capacity, _buf ? (int)_buf->cap : 0);
 
 		/// <summary>Gets current size of buffer in bytes.</summary>
-		property int Length { int get() { return _buf ? (int)_buf->len : 0; } }
+		PropGet(int, Length, _buf ? (int)_buf->len : 0);
 
 		/// <summary>
 		/// Returns a managed copy of buffer contents.
@@ -62,7 +60,8 @@ namespace MuPDF {
 		static Buffer^ FromArray(array<Byte>^ data);
 
 	internal:
-		property fz_buffer* Ptr { fz_buffer* get() { return _buf; } }
+		PropGet(fz_buffer*, Ptr, _buf);
+
 		Buffer(fz_buffer* buf) : _buf(buf) {
 			if (_buf) {
 				fz_keep_buffer(Context::Ptr, _buf);

@@ -80,6 +80,15 @@ CompressedBuffer^ Image::GetCompressedBuffer() {
 	return buffer ? gcnew CompressedBuffer(buffer) : nullptr;
 }
 
+void MuPDF::Image::ReleaseHandle() {
+	fz_drop_image(Context::Ptr, _img);
+	_img = NULL;
+	if (_privateBuffer) {
+		delete _privateBuffer;
+	}
+	_privateBuffer = nullptr;
+}
+
 array<Byte>^ Image::GetCompressedBytes() {
 	auto compressed = GetCompressedBuffer();
 	if (!compressed) {

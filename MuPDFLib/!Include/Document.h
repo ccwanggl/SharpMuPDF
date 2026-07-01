@@ -28,91 +28,36 @@ enum class PageLabelStyle;
 
 public ref class Document sealed : IDisposable, IEquatable<Document^> {
 public:
-	property int Chapters {
-		int get() { return fz_count_chapters(Context::Ptr, _document); }
-	}
-	property int PageCount {
-		int get() {
-			return _pageCount < 0
-				? (_pageCount = pdf_count_pages(Context::Ptr, _pdf))
-				: _pageCount;
-		}
-	}
-	property int Version {
-		int get() { return _pdf->version; }
-	}
-	property int ObjectCount {
-		int get() { return pdf_count_objects(Context::Ptr, _pdf); }
-	}
-	property long long FileSize {
-		long long get() { return _pdf->file_size; }
-	}
-	property long long StartXref {
-		long long get() { return _pdf->startxref; }
-	}
-	property int XrefBase {
-		int get() { return _pdf->xref_base; }
-	}
-	property int AssociatedFileCount {
-		int get() { return pdf_count_document_associated_files(Context::Ptr, _pdf); }
-	}
-	property int IncrementalSectionCount {
-		int get() { return _pdf->num_incremental_sections; }
-	}
-	property int XrefLength {
-		int get() { return pdf_xref_len(Context::Ptr, _pdf); }
-	}
-	property int XrefSectionCount {
-		int get() { return _pdf->num_xref_sections; }
-	}
-	property bool NeedsPassword {
-		bool get() { return fz_needs_password(Context::Ptr, _document); }
-	}
-	property bool WasRepaired {
-		bool get() { return pdf_was_repaired(Context::Ptr, _pdf); }
-	}
-	property bool RepairAttempted {
-		bool get() { return _pdf->repair_attempted; }
-	}
-	property bool HasUnsavedChanges {
-		bool get() { return pdf_has_unsaved_changes(Context::Ptr, _pdf); }
-	}
-	property bool Redacted {
-		bool get() { return _pdf->redacted; }
-	}
-	property bool ResyncRequired {
-		bool get() { return _pdf->resynth_required; }
-	}
-	property int OrphansCount {
-		int get() { return _pdf->orphans_count; }
-	}
+	PropGet(int, PageCount, _pageCount < 0 ? (_pageCount = pdf_count_pages(Context::Ptr, _pdf)) : _pageCount);
+	PropGet(int, Chapters, fz_count_chapters(Context::Ptr, _document));
+	PropGet(int, Version, _pdf->version);
+	PropGet(int, ObjectCount, pdf_count_objects(Context::Ptr, _pdf));
+	PropGet(int64_t, FileSize, _pdf->file_size);
+	PropGet(int64_t, StartXref, _pdf->startxref);
+	PropGet(int, XrefBase, _pdf->xref_base);
+	PropGet(int, AssociatedFileCount, pdf_count_document_associated_files(Context::Ptr, _pdf));
+	PropGet(int, IncrementalSectionCount, _pdf->num_incremental_sections);
+	PropGet(int, XrefLength, pdf_xref_len(Context::Ptr, _pdf));
+	PropGet(int, XrefSectionCount, _pdf->num_xref_sections);
+	PropGet(bool, NeedsPassword, fz_needs_password(Context::Ptr, _document));
+	PropGet(bool, WasRepaired, pdf_was_repaired(Context::Ptr, _pdf));
+	PropGet(bool, RepairAttempted, _pdf->repair_attempted);
+	PropGet(bool, HasUnsavedChanges, pdf_has_unsaved_changes(Context::Ptr, _pdf));
+	PropGet(bool, Redacted, _pdf->redacted);
+	PropGet(bool, ResyncRequired, _pdf->resynth_required);
+	PropGet(int, OrphansCount, _pdf->orphans_count);
+	PropGet(bool, CanUndo, pdf_can_undo(Context::Ptr, _pdf));
+	PropGet(bool, CanRedo, pdf_can_redo(Context::Ptr, _pdf));
+	PropGet(bool, CanBeSavedIncrementally, pdf_can_be_saved_incrementally(Context::Ptr, _pdf));
+	PropGet(bool, IsLinearized, pdf_doc_was_linearized(Context::Ptr, _pdf));
+	PropGet(bool, IsDisposed, _document == NULL);
+	PropEmptyGet(PdfDictionary^, Trailer);
+	PropEmptyGet(PdfDictionary^, Root);
+	PropEmptyGet(PdfDocumentInfo^, Info);
+
 	property String^ FilePath {
 		String^ get() { return _path; }
 		internal: void set(String^ value) { _path = value; }
-	}
-	property PdfDictionary^ Trailer {
-		PdfDictionary^ get();
-	}
-	property PdfDictionary^ Root {
-		PdfDictionary^ get();
-	}
-	property PdfDocumentInfo^ Info {
-		PdfDocumentInfo^ get();
-	}
-	property bool CanUndo {
-		bool get() { return pdf_can_undo(Context::Ptr, _pdf); }
-	}
-	property bool CanRedo {
-		bool get() { return pdf_can_redo(Context::Ptr, _pdf); }
-	}
-	property bool CanBeSavedIncrementally {
-		bool get() { return pdf_can_be_saved_incrementally(Context::Ptr, _pdf); }
-	}
-	property bool IsLinearized {
-		bool get() { return pdf_doc_was_linearized(Context::Ptr, _pdf); }
-	}
-	property bool IsDisposed {
-		bool get() { return _document == NULL; }
 	}
 
 	static MuPDF::Document^ Open(String^ filePath);

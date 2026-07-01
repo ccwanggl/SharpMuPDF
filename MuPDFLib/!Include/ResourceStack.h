@@ -19,20 +19,14 @@ public:
 
 	PdfDictionary^ Pop();
 
-	property int Count {
-		int get() { return _count; }
-	}
+	PropGet(int, Count, _count);
 
-	property bool IsEmpty {
-		bool get() { return _head == nullptr; }
-	}
+	PropGet(bool, IsEmpty, _head == nullptr);
 
 	~ResourceStack();
 
 internal:
-	property pdf_resource_stack* Ptr {
-		pdf_resource_stack* get() { return _head; }
-	}
+	PropGet(pdf_resource_stack*, Ptr, _head);
 
 private:
 	pdf_resource_stack* _head;

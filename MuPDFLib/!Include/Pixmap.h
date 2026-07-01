@@ -2,8 +2,8 @@
 #define __PIXMAP
 
 #pragma once
-#include "fitz.h"
 #include "MuPDF.h"
+#include "ObjWrapper.h"
 
 using namespace System;
 
@@ -38,18 +38,18 @@ public:
 	static int LoadTiffSubImageCount(IntPtr data, int length);
 	static Pixmap^ LoadTiffSubImage(IntPtr data, int length, int index);
 
-	property IntPtr Samples { IntPtr get() { return _samples; } }
-	property int Stride { int get() { return _stride; } }
-	property int Width { int get() { return _width; } }
-	property int Height { int get() { return _height; } }
-	property int X { int get() { return fz_pixmap_x(Context::Ptr, _pixmap); } }
-	property int Y { int get() { return fz_pixmap_y(Context::Ptr, _pixmap); } }
-	property int Components { int get() { return _components; } }
-	property int Colorants { int get() { return fz_pixmap_colorants(Context::Ptr, _pixmap); } }
-	property int Spots { int get() { return fz_pixmap_spots(Context::Ptr, _pixmap); } }
-	property bool IsMonochrome{ bool get() { return fz_is_pixmap_monochrome(Context::Ptr, _pixmap); } }
-	property MuPDF::BBox BBox { MuPDF::BBox get() { return fz_pixmap_bbox(Context::Ptr, _pixmap); } }
-	property MuPDF::Colorspace^ Colorspace { MuPDF::Colorspace ^ get(); }
+	PropGet(IntPtr, Samples, _samples);
+	PropGet(int, Stride, _stride);
+	PropGet(int, Width, _width);
+	PropGet(int, Height, _height);
+	PropGet(int, X, fz_pixmap_x(Context::Ptr, _pixmap));
+	PropGet(int, Y, fz_pixmap_y(Context::Ptr, _pixmap));
+	PropGet(int, Components, _components);
+	PropGet(int, Colorants, fz_pixmap_colorants(Context::Ptr, _pixmap));
+	PropGet(int, Spots, fz_pixmap_spots(Context::Ptr, _pixmap));
+	PropGet(bool, IsMonochrome, fz_is_pixmap_monochrome(Context::Ptr, _pixmap));
+	PropGet(MuPDF::BBox, BBox, fz_pixmap_bbox(Context::Ptr, _pixmap));
+	property MuPDF::Colorspace^ Colorspace { MuPDF::Colorspace^ get(); };
 	/// <summary>
 	/// Return the number of alpha planes in a Pixmap. Does not throw exceptions.
 	/// </summary>

@@ -2,10 +2,8 @@
 #define __PDFOBJECT
 
 #pragma once
-#include "fitz.h"
 #include "pdf.h"
-#include "Collection.h"
-#include "Stream.h"
+#include "MuPDF.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -44,80 +42,39 @@ public:
 	literal int MaxObjectNumber = PDF_MAX_OBJECT_NUMBER;
 	literal int MaxGenerationNumber = PDF_MAX_GEN_NUMBER;
 	/// <summary>
-	/// Gets or sets whether this object is dirty (modified).
-	/// </summary>
-	property bool IsDirty {
-		bool get() { return pdf_obj_is_dirty(_ctx, _obj); }
-		void set(bool value) {
-			if (value) {
-				pdf_dirty_obj(_ctx, _obj);
-			}
-			else {
-				pdf_clean_obj(_ctx, _obj);
-			}
-		}
-	}
-	property bool IsIncremental{
-		bool get() { return pdf_obj_is_incremental(_ctx, _obj); }
-	}
-	/// <summary>
 	/// Provides direct object kind info.
 	/// </summary>
-	property Kind TypeKind {
-		virtual Kind get();
-	}
-	property bool IsIndirect {
-		bool get() { return pdf_is_indirect(_ctx, _obj); }
-	}
-	property bool IsStream {
-		bool get() { return pdf_is_stream(_ctx, _obj); }
-	}
-	property bool IsName {
-		bool get() { return pdf_is_name(_ctx, _obj); }
-	}
-	property bool IsNull {
-		bool get() { return pdf_is_null(_ctx, _obj); }
-	}
-	property bool IsBoolean {
-		bool get() { return pdf_is_bool(_ctx, _obj); }
-	}
-	property bool IsInteger {
-		bool get() { return pdf_is_int(_ctx, _obj); }
-	}
-	property bool IsFloat {
-		bool get() { return pdf_is_real(_ctx, _obj); }
-	}
-	property bool IsNumber {
-		bool get() { return pdf_is_number(_ctx, _obj); }
-	}
-	property bool IsString {
-		bool get() { return pdf_is_string(_ctx, _obj); }
-	}
-	property bool IsArray {
-		bool get() { return pdf_is_array(_ctx, _obj); }
-	}
-	property bool IsDictionary {
-		bool get() { return pdf_is_dict(_ctx, _obj); }
-	}
-	property bool IsPredefined {
-		bool get() { return _obj < PDF_LIMIT; }
-	}
-	property int IntegerValue {
-		int get() { return pdf_to_int(_ctx, _obj); }
-	}
-	property long long LongValue {
-		long long get() { return pdf_to_int64(_ctx, _obj); }
-	}
-	property float FloatValue {
-		float get() { return pdf_to_real(_ctx, _obj); }
-	}
-	property PdfObject^ UnderlyingObject {
-		PdfObject^ get() {
-			return pdf_is_indirect(_ctx, _obj)
-				? Wrap(_obj, true)
-				: this;
+	property Kind TypeKind { virtual Kind get(); }
+
+	/// <summary>
+	/// Gets or sets whether this object is dirty (modified).
+	/// </summary>
+	PropGetSet(bool, IsDirty,
+		pdf_obj_is_dirty(_ctx, _obj),
+		if (value) {
+			pdf_dirty_obj(_ctx, _obj);
 		}
-	}
+		else {
+			pdf_clean_obj(_ctx, _obj);
+		});
+	PropGet(bool, IsIncremental, pdf_obj_is_incremental(_ctx, _obj));
+	PropGet(bool, IsIndirect, pdf_is_indirect(_ctx, _obj));
+	PropGet(bool, IsStream, pdf_is_stream(_ctx, _obj));
+	PropGet(bool, IsName, pdf_is_name(_ctx, _obj));
+	PropGet(bool, IsNull, pdf_is_null(_ctx, _obj));
+	PropGet(bool, IsBoolean, pdf_is_bool(_ctx, _obj));
+	PropGet(bool, IsInteger, pdf_is_int(_ctx, _obj));
+	PropGet(bool, IsFloat, pdf_is_real(_ctx, _obj));
+	PropGet(bool, IsNumber, pdf_is_number(_ctx, _obj));
+	PropGet(bool, IsString, pdf_is_string(_ctx, _obj));
+	PropGet(bool, IsArray, pdf_is_array(_ctx, _obj));
+	PropGet(bool, IsDictionary, pdf_is_dict(_ctx, _obj));
+	PropGet(bool, IsPredefined, _obj < PDF_LIMIT);
+	PropGet(int, IntegerValue, pdf_to_int(_ctx, _obj));
+	PropGet(long long, LongValue, pdf_to_int64(_ctx, _obj));
+	PropGet(float, FloatValue, pdf_to_real(_ctx, _obj));
+	PropGet(PdfObject^, UnderlyingObject, pdf_is_indirect(_ctx, _obj) ? Wrap(_obj, true) : this);
+
 	void MarkDirty() {
 		pdf_dirty_obj(_ctx, _obj);
 	}
@@ -199,14 +156,10 @@ internal:
 
 public ref class PdfBoolean : PdfObject {
 public:
-	property Kind TypeKind {
-		virtual Kind get() override { return Kind::Boolean; }
-	}
 	static initonly PdfBoolean^ True = gcnew PdfBoolean(true);
 	static initonly PdfBoolean^ False = gcnew PdfBoolean(false);
-	property bool Value {
-		bool get() { return Ptr == PDF_TRUE; }
-	}
+	property Kind TypeKind { virtual Kind get() override { return Kind::Boolean; } }
+	PropGet(bool, Value, Ptr == PDF_TRUE);
 	virtual String^ ToString() override { return Ptr == PDF_TRUE ? "<true>" : "<false>"; }
 internal:
 	PdfBoolean(bool value) : PdfObject(value ? PDF_TRUE : PDF_FALSE) {}
@@ -227,12 +180,8 @@ public:
 	property Kind TypeKind {
 		virtual Kind get() override { return Kind::Name; }
 	}
-	property String^ Name {
-		String^ get() { return _name ? _name : (_name = GetText()); }
-	}
-	property PdfNames PredefinedValue {
-		PdfNames get() { return (int)Ptr < PDF_ENUM_LIMIT ? (PdfNames)(int)Ptr : PdfNames::Undefined; }
-	}
+	PropGet(String^, Name, _name ? _name : (_name = GetText()));
+	PropGet(PdfNames, PredefinedValue, (int)Ptr < PDF_ENUM_LIMIT ? (PdfNames)(int)Ptr : PdfNames::Undefined);
 	static operator PdfName^(PdfNames value) {
 		return gcnew PdfName((pdf_obj*)value);
 	}
@@ -276,9 +225,7 @@ public:
 	property Kind TypeKind {
 		virtual Kind get() override { return Kind::Float; }
 	}
-	property float Value {
-		float get() { return pdf_to_real(Context::Ptr, Ptr); }
-	}
+	PropGet(float, Value, pdf_to_real(Context::Ptr, Ptr));
 	virtual String^ ToString() override { return Value.ToString(); }
 internal:
 	PdfFloat(pdf_obj* obj) : PdfObject(obj) {};
@@ -293,9 +240,7 @@ public:
 	property String^ Value {
 		String^ get();
 	}
-	property int Length {
-		int get() { return (int)(pdf_to_str_len(Context::Ptr, Ptr)); }
-	}
+	PropGet(int, Length, (int)(pdf_to_str_len(Context::Ptr, Ptr)));
 	/// <summary>
 	/// Gets underlying bytes in a PDF string.
 	/// </summary>
@@ -321,16 +266,18 @@ protected:
 private:
 };
 
-public ref class PdfDictionary : PdfContainer, System::Collections::Generic::IEnumerable<KeyValuePair<PdfName^, PdfObject^>>, IIndexableCollection<KeyValuePair<PdfName^, PdfObject^>> {
+typedef System::Collections::Generic::KeyValuePair<PdfName^, PdfObject^> DictItemPair;
+
+public ref class PdfDictionary : PdfContainer, System::Collections::Generic::IEnumerable<DictItemPair>, IIndexableCollection<DictItemPair> {
 public:
+	property Kind TypeKind {
+		virtual Kind get() override { return Kind::Dictionary; }
+	}
 	property int Count {
 		virtual int get() override { return pdf_dict_len(Context::Ptr, Ptr); }
 	}
 	property PdfName^ Type {
 		PdfName^ get();
-	}
-	property Kind TypeKind {
-		virtual Kind get() override { return Kind::Dictionary; }
 	}
 	bool IsType(PdfNames typeName) {
 		auto o = pdf_dict_get(Context::Ptr, Ptr, PDF_NAME(Type));
@@ -437,8 +384,8 @@ public:
 		PdfName^ type = Type;
 		return type ? String::Concat("{", type->ToString(), "}") : "{}";
 	}
-	virtual System::Collections::Generic::IEnumerator<KeyValuePair<PdfName^, PdfObject^>>^ GetEnumerator() sealed = System::Collections::Generic::IEnumerable<KeyValuePair<PdfName^, PdfObject^>>::GetEnumerator {
-		return gcnew IndexableEnumerator<PdfDictionary^, KeyValuePair<PdfName^, PdfObject^>>(this);
+	virtual System::Collections::Generic::IEnumerator<DictItemPair>^ GetEnumerator() sealed = System::Collections::Generic::IEnumerable<DictItemPair>::GetEnumerator {
+		return gcnew IndexableEnumerator<PdfDictionary^, DictItemPair>(this);
 	}
 	virtual System::Collections::IEnumerator^ GetEnumeratorBase() sealed =
 		System::Collections::IEnumerable::GetEnumerator {
@@ -448,29 +395,27 @@ internal:
 	PdfDictionary(pdf_obj* obj) : PdfContainer(obj) {};
 	PdfDictionary(pdf_obj* obj, bool keep) : PdfContainer(obj, keep) {};
 public:
-	property KeyValuePair<PdfName^, PdfObject^> default[int] {
-		virtual KeyValuePair<PdfName^, PdfObject^> get(int index) {
-			return KeyValuePair<PdfName^, PdfObject^>(GetKey(index), GetValue(index));
-		};
-	}
+	ReadonlyIndexer(DictItemPair, int, index,
+		DictItemPair(GetKey(index), GetValue(index))
+	);
 	/// <summary>
 	/// Gets or sets entry in <see cref="PdfDictionary"/>.
 	/// The return value of get will never be <see langword="null"/>.
 	/// If requested entry does not exists, instance of <see cref="PdfNull"/> will be returned instead.
 	/// </summary>
-	property PdfObject^ default[PdfNames] {
-		PdfObject^ get(PdfNames key) { return PdfObject::Wrap(pdf_dict_get(Context::Ptr, Ptr, (pdf_obj*)key)); }
-		void set(PdfNames key, PdfObject^ value) { pdf_dict_put(Context::Ptr, Ptr, (pdf_obj*)key, value->Ptr); }
-	}
+	Indexer(PdfNames, key, PdfObject^, value,
+		PdfObject::Wrap(pdf_dict_get(Context::Ptr, Ptr, (pdf_obj*)key)),
+		pdf_dict_put(Context::Ptr, Ptr, (pdf_obj*)key, value->Ptr)
+	);
 	/// <summary>
 	/// Gets or sets entry in <see cref="PdfDictionary"/>.
 	/// The return value of get will never be <see langword="null"/>.
 	/// If requested entry does not exists, instance of <see cref="PdfNull"/> will be returned instead.
 	/// </summary>
-	property PdfObject^ default[PdfName^] {
-		PdfObject^ get(PdfName^ key) { return PdfObject::Wrap(pdf_dict_get(Context::Ptr, Ptr, key->Ptr)); }
-		void set(PdfName^ key, PdfObject^ value) { pdf_dict_put(Context::Ptr, Ptr, key->Ptr, value->Ptr); }
-	}
+	Indexer(PdfName^, key, PdfObject^, value,
+		PdfObject::Wrap(pdf_dict_get(Context::Ptr, Ptr, key->Ptr)),
+		pdf_dict_put(Context::Ptr, Ptr, key->Ptr, value->Ptr)
+	);
 };
 
 public ref class PdfStream : PdfDictionary {
@@ -497,30 +442,14 @@ internal:
 
 public ref class PdfDocumentInfo : PdfDictionary {
 public:
-	property String^ Title {
-		String^ get() { return GetString(PdfNames::Title); }
-	}
-	property String^ Subject {
-		String^ get() { return GetString(PdfNames::Subject); }
-	}
-	property String^ Producer {
-		String^ get() { return GetString(PdfNames::Producer); }
-	}
-	property String^ Creator {
-		String^ get() { return GetString(PdfNames::Creator); }
-	}
-	property String^ Author {
-		String^ get() { return GetString(PdfNames::Author); }
-	}
-	property String^ Keywords {
-		String^ get() { return GetString(PdfNames::Keywords); }
-	}
-	property String^ CreationDate {
-		String^ get() { return GetString(PdfNames::CreationDate); }
-	}
-	property String^ ModificationDate {
-		String^ get() { return GetString(PdfNames::ModDate); }
-	}
+	PropGet(String^, Title, GetString(PdfNames::Title));
+	PropGet(String^, Subject, GetString(PdfNames::Subject));
+	PropGet(String^, Producer, GetString(PdfNames::Producer));
+	PropGet(String^, Creator, GetString(PdfNames::Creator));
+	PropGet(String^, Author, GetString(PdfNames::Author));
+	PropGet(String^, Keywords, GetString(PdfNames::Keywords));
+	PropGet(String^, CreationDate, GetString(PdfNames::CreationDate));
+	PropGet(String^, ModificationDate, GetString(PdfNames::ModDate));
 internal:
 	PdfDocumentInfo(pdf_obj* obj) : PdfDictionary(obj) {};
 private:
@@ -615,20 +544,16 @@ public:
 internal:
 	PdfArray(pdf_obj* obj) : PdfContainer(obj) {};
 public:
-	property PdfObject^ default[int] {
-		virtual PdfObject^ get(int index) { return Wrap(pdf_array_get(Context::Ptr, Ptr, index)); }
-		void set(int index, PdfObject^ value) { pdf_array_put_drop(Context::Ptr, Ptr, index, value->Ptr); }
-	}
+	Indexer(int, index, PdfObject^, value,
+		Wrap(pdf_array_get(Context::Ptr, Ptr, index)),
+		pdf_array_put_drop(Context::Ptr, Ptr, index, value->Ptr)
+	);
 };
 
 public ref class PdfReference : PdfObject {
 public:
-	property int Number {
-		int get() { return pdf_to_num(Context::Ptr, Ptr); }
-	}
-	property int Generation {
-		int get() { return pdf_to_gen(Context::Ptr, Ptr); }
-	}
+	PropGet(int, Number, pdf_to_num(Context::Ptr, Ptr));
+	PropGet(int, Generation, pdf_to_gen(Context::Ptr, Ptr));
 	property Kind TypeKind {
 		virtual Kind get() override { return Kind::Reference; }
 	}

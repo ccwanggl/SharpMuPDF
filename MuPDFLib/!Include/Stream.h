@@ -17,6 +17,7 @@ public ref class Stream sealed : IDisposable {
 public:
 	Stream(array<Byte>^ data);
 	Stream(String^ filePath);
+
 	array<Byte>^ ReadAll(int maxSize);
 	array<Byte>^ ReadAll() {
 		return ReadAll(0x6400000);
@@ -29,9 +30,9 @@ internal:
 	~Stream() {
 		ReleaseHandle();
 	}
-	property fz_stream* Ptr {
-		fz_stream* get() { return _stream; }
-	}
+
+	PropGet(fz_stream*, Ptr, _stream);
+
 private:
 	fz_stream* _stream;
 	GCHandle _data;

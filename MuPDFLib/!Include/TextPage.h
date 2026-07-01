@@ -4,6 +4,7 @@
 #pragma once
 #include "fitz.h"
 #include "MuPDF.h"
+#include "ObjWrapper.h"
 
 using namespace System;
 using namespace System::Collections;
@@ -86,23 +87,12 @@ extern "C" static void init_system_font_list(void);
 
 public ref class TextFont : IEquatable<TextFont^> {
 public:
-	property String^ Name {
-		String^ get() {
-			return _name && _font->name == _namePtr ? _name : (_name = gcnew String(_font->name));
-		}
-	}
-	property int GlyphCount {
-		int get() { return _font->glyph_count; }
-	}
-	property int WidthCount {
-		int get() { return _font->width_count; }
-	}
-	property short WidthDefault {
-		short get() { return _font->width_default; }
-	}
-	property FontFlags Flags {
-		FontFlags get() { return (FontFlags)*(int*)&(_font->flags); }
-	}
+	PropGet(String^, Name, _name && _font->name == _namePtr ? _name : (_name = gcnew String(_font->name)));
+	PropGet(int, GlyphCount, _font->glyph_count);
+	PropGet(int, WidthCount, _font->width_count);
+	PropGet(short, WidthDefault, _font->width_default);
+	PropGet(FontFlags, Flags, (FontFlags)*(int*)&(_font->flags));
+
 	array<Byte>^ GetFontNameBytes();
 	array<short>^ GetWidths();
 	int GetCharacter(int cid) {
@@ -140,40 +130,24 @@ public:
 	/// <summary>
 	/// Gets the Unicode code point for this character.
 	/// </summary>
-	property int Character {
-		int get() { return _ch->c; }
-	}
+	PropGet(int, Character, _ch->c);
 	/// <summary>
 	/// Gets the sRGB Hex color (alpha in top 8 bits, then r, then g, then b in low bits).
 	/// </summary>
-	property int Color {
-		int get() { return _ch->argb; }
-	}
-	property float Size {
-		float get() { return _ch->size; }
-	}
+	PropGet(int, Color, _ch->argb);
+	PropGet(float, Size, _ch->size);
 	/// <summary>
 	/// Gets a pointer to the internal font, for font comparison without creating new TextFont instances.
 	/// </summary>
-	property IntPtr FontPtr {
-		IntPtr get() { return (IntPtr)(void*)_ch->font; }
-	}
-	property TextChar^ Next {
-		TextChar^ get() { return _ch->next ? gcnew TextChar(_ch->next) : nullptr; }
-	}
-	property Point Origin {
-		Point get() { return _ch->origin; }
-	}
-	property MuPDF::Quad Quad {
-		MuPDF::Quad get() { return _ch->quad; }
-	}
-	property TextFont^ Font {
-		TextFont^ get() { return _Font ? _Font : gcnew TextFont(_ch->font); }
-	}
+	PropGet(IntPtr, FontPtr, (IntPtr)(void*)_ch->font);
+	PropGet(TextChar^, Next, _ch->next ? gcnew TextChar(_ch->next) : nullptr);
+	PropGet(Point, Origin, _ch->origin);
+	PropGet(MuPDF::Quad, Quad, _ch->quad);
+	PropGet(TextFont^, Font, _Font ? _Font : gcnew TextFont(_ch->font));
 	/// <summary>
 	/// Gets rendering flags of a character
 	/// </summary>
-	property CharacterFlags Flags { CharacterFlags get() { return (CharacterFlags)*(uint16_t*)&(_ch->flags); } }
+	PropGet(CharacterFlags, Flags, (CharacterFlags)*(uint16_t*)&(_ch->flags));
 
 	/// <summary>
 	/// Compares whether other TextChar has the same font as the current one.
@@ -239,24 +213,15 @@ private:
 
 public ref class TextLine : Generic::IEnumerable<TextChar^>, IEquatable<MuPDF::TextLine^> {
 public:
-	property bool IsVertical {
-		bool get() { return _line->wmode; }
-	}
-	property Box Bound {
-		Box get() { return _line->bbox; }
-	}
-	property TextChar^ FirstCharacter {
-		TextChar^ get() { return gcnew TextChar(_line->first_char); }
-	}
-	property TextChar^ LastCharacter {
-		TextChar^ get() { return gcnew TextChar(_line->last_char); }
-	}
+	PropGet(bool, IsVertical, _line->wmode);
+	PropGet(Box, Bound, _line->bbox);
+	PropGet(TextChar^, FirstCharacter, gcnew TextChar(_line->first_char));
+	PropGet(TextChar^, LastCharacter, gcnew TextChar(_line->last_char));
 	/// <summary>
 	/// Gets the first font used in TextLine.
 	/// </summary>
-	property TextFont^ Font {
-		TextFont^ get() { return gcnew TextFont(_line->first_char->font); }
-	}
+	PropGet(TextFont^, Font, gcnew TextFont(_line->first_char->font));
+
 	Generic::IEnumerable<MuPDF::TextSpan^>^ GetSpans() {
 		return gcnew TextLineSpanContainer(this);
 	}
@@ -324,12 +289,8 @@ public enum class BlockType {
 
 public ref class TextBlock : Generic::IEnumerable<TextLine^>, IEquatable<TextBlock^> {
 public:
-	property BlockType Type {
-		BlockType get() { return (BlockType)_block->type; }
-	}
-	property Box Bound {
-		Box get() { return _block->bbox; }
-	}
+	PropGet(BlockType, Type, (BlockType)_block->type);
+	PropGet(Box, Bound, _block->bbox);
 	virtual String^ ToString() override;
 
 internal:
@@ -362,15 +323,10 @@ public:
 
 public ref class TextPage : Generic::IEnumerable<TextBlock^> {
 public:
-	property Box Bound {
-		Box get() { return _page->mediabox; }
-	}
-	property TextBlock^ FirstBlock {
-		TextBlock^ get() { return gcnew TextBlock(_page->first_block); }
-	}
-	property TextBlock^ LastBlock {
-		TextBlock^ get() { return gcnew TextBlock(_page->last_block); }
-	}
+	PropGet(Box, Bound, _page->mediabox);
+	PropGet(TextBlock^, FirstBlock, gcnew TextBlock(_page->first_block));
+	PropGet(TextBlock^, LastBlock, gcnew TextBlock(_page->last_block));
+
 	String^ ToString() override {
 		return Bound.ToString();
 	}
